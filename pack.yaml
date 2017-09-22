@@ -1,7 +1,7 @@
 ---
 ref: exos
 name: EXOS
-description: Extreme EXOS pack containing sensors, rules and actions
+description: Extreme EXOS for managing Extreme Networks devices
 keywords:
     - exos
     - extreme
