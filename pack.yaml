@@ -1,7 +1,7 @@
 ---
 ref: exos
 name: EXOS
-description: Extreme EXOS for managing Extreme Networks devices
+description: Actions for managing Extreme Networks EXOS devices
 keywords:
     - exos
     - extreme
