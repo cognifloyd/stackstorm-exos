@@ -8,5 +8,6 @@ password:
     description: "Login password"
     type: "string"
     required: true
+    secret: true
     default: ""
 

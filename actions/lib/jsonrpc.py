@@ -46,7 +46,8 @@ class JsonRPC(object):
 
         # JSONRPC defines params as a list
         # EXOS expects the CLI command to be a string in a single list entry
-        self.json_request['params'] = [cmds]
+        # Multiple commands need to be converted to a single entry list, semi-colo separated
+        self.json_request['params'] = [';'.join(cmds)]
 
         # send the JSONRPC message to the EXOS switch
         response = requests.post(self.url,
@@ -64,7 +65,7 @@ class JsonRPC(object):
             try:
                 # ensure the response is JSON encoded
                 jsonrpc_response = json.loads(response.text)
-            except:
+            except json.JSONDecodeError:
                 raise ValueError("response not in JSON format")
         else:
             # raise http exception
@@ -80,9 +81,19 @@ class JsonRPC(object):
             if debug_data is not None:
                 return debug_data
         elif isinstance(rslt_list, list):
-            for row in rslt_list:
-                # check the EXOS command response for errors by scraping the CLI output
-                cli_output = row.get('CLIoutput')
+            self.errorcheck(rslt_list)
+        else:
+            raise ValueError("Unexpected JSON result data format")
+
+        # return the JSONRPC result to the caller
+        return rslt_list
+
+    def errorcheck(self, rslt_list):
+
+        for result_object in rslt_list:
+            # check the EXOS command response for errors by scraping the CLI output
+            if isinstance(result_object, dict):
+                cli_output = result_object.get('CLIoutput')
                 if cli_output is None:
                     continue
 
@@ -93,8 +104,6 @@ class JsonRPC(object):
                         raise RuntimeError(line)
                     if lower_case_line.startswith('error'):
                         raise RuntimeError(line)
-        else:
-            raise ValueError("Unexpected JSON result data format")
-
-        # return the JSONRPC result to the caller
-        return rslt_list
+            elif isinstance(result_object, list):
+                self.errorcheck(result_object)
+                continue

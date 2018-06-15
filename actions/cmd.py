@@ -1,11 +1,10 @@
-import sys
 from lib.jsonrpc import JsonRPC
 from st2common.runners.base_action import Action
 
 
 class ExosCmd(Action):
 
-    def run(self, ipaddress='10.68.65.81', cmd=''):
+    def run(self, ipaddress='10.68.65.81', cmd=[]):
         """
         Run an EXOS command on the remote switch
 
@@ -31,5 +30,5 @@ class ExosCmd(Action):
             response = jsonrpc.send(cmd)
             self.action_service.set_value(name='cookie', value=jsonrpc.cookie)
             return response
-        except Exception:
-            sys.exit(1)
+        except Exception as e:
+            raise e
