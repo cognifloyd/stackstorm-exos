@@ -11,7 +11,7 @@ parameters:
         required: true
         position: 0
     cmd:
-        type: "string"
-        description: "List of EXOS CLI commands."
+        type: "array"
+        description: "List of one or more EXOS CLI commands."
         required: true
         position: 1
